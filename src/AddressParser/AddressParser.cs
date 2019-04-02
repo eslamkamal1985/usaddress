@@ -945,6 +945,20 @@ namespace USAddress
         /// <returns>
         /// List of parsed addresses, or empty list if no address could be parsed.
         /// </returns>
+        public List<AddressParseResult> ExtractAddresses(string input, bool normalize = false)
+        {
+            return ExtractAddresses(input, AddressRegex, normalize);
+        }
+
+        /// <summary>
+        /// Attempts to extract one or more US address given input.
+        /// </summary>
+        /// <param name="input">The input string.</param>
+        /// <param name="pattern">The regex pattern to use for matching address fields</param>
+        /// <param name="normalize">if set to <c>true</c> then normalize extracted fields.</param>
+        /// <returns>
+        /// List of parsed addresses, or empty list if no address could be parsed.
+        /// </returns>
         public List<AddressParseResult> ExtractAddresses(string input, Regex pattern, bool normalize)
         {
             var results = new List<AddressParseResult>();
@@ -989,7 +1003,7 @@ namespace USAddress
         /// <returns>
         /// The parsed address fields, or null if the address could not be parsed.
         /// </returns>
-        public AddressParseResult ParseAddressLine(string input, bool normalize)
+        public AddressParseResult ParseAddressLine(string input, bool normalize = false)
         {
             return ParseAddress(input, AddressLineRegex, normalize);
         }
@@ -1002,7 +1016,7 @@ namespace USAddress
         /// <returns>
         /// List of parsed addresses, or empty list if no address could be parsed.
         /// </returns>
-        public List<AddressParseResult> ExtractAddressLines(string input, bool normalize)
+        public List<AddressParseResult> ExtractAddressLines(string input, bool normalize = false)
         {
             return ExtractAddresses(input, AddressLineRegex, normalize);
         }
