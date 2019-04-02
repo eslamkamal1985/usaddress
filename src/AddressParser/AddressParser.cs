@@ -215,8 +215,12 @@ namespace USAddress
         /// The place pattern.
         /// </value>
         public string PlacePattern => @"
-                    (?:{0}\W*)?
+                    (?:
+                    (?:{0}\W*)
                     (?:(?<{2}>{1}))?
+                    |
+                    (?:(?<{2}>{1}))
+                    )
                 ".FormatInvariant(CityAndStatePattern, ZipPattern, Components.Zip);
 
         /// <summary>
@@ -1172,17 +1176,17 @@ namespace USAddress
                   )".FormatInvariant(Components.Number, Components.SecondaryNumber);
 
             var generalPattern = @"(
-                        [^\w\#]*    # skip non-word chars except # (e.g. unit)
                         (  {0} )\W*
                            {1}\W*
                         (?:{2}\W+)?
                     )".FormatInvariant(numberPattern, StreetPattern, AllSecondaryUnitPattern);
 
             var addressPattern = @"
-                    ^
+                    \b
                     {0}
                     |
                     {1}
+                    \b
                 ".FormatInvariant(PostalBoxPatternAddressLineOnly, generalPattern);
 
             return new Regex(addressPattern, MatchOptions);
@@ -1204,7 +1208,6 @@ namespace USAddress
 
             var armedForcesPattern = @"# Special case for APO/FPO/DPO addresses
                     (
-                        [^\w\#]*
                         (?<{1}>.+?)
                         (?<{2}>[AFD]PO)\W+
                         (?<{3}>A[AEP])\W+
@@ -1213,7 +1216,6 @@ namespace USAddress
                     )".FormatInvariant(ZipPattern, Components.StreetLine, Components.City, Components.State, Components.Zip);
 
             var generalPattern = @"(
-                        [^\w\#]*    # skip non-word chars except # (e.g. unit)
                         (  {0} )\W*
                            {1}\W+
                         (?:{2}\W+)?
@@ -1222,13 +1224,13 @@ namespace USAddress
                     )".FormatInvariant(numberPattern, StreetPattern, AllSecondaryUnitPattern, PlacePattern);
 
             var addressPattern = @"
-                    ^
+                    \b
                     {0}
                     |
                     {1}
                     |
                     {2}
-                    $           # right up to end of string
+                    \b
                 ".FormatInvariant(armedForcesPattern, PostalBoxPattern, generalPattern);
 
             return new Regex(addressPattern, MatchOptions);
