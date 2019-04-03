@@ -935,9 +935,9 @@ namespace USAddress
         /// <returns>
         /// The parsed address, or null if the address could not be parsed.
         /// </returns>
-        public AddressParseResult ParseAddress(string input, Regex pattern, bool normalize)
+        public AddressParseResult ParseAddress(string input, Regex pattern, bool normalize, int startIndex = 0)
         {
-            return ExtractAddresses(input, pattern, normalize).FirstOrDefault();
+            return ExtractAddresses(input, pattern, normalize, startIndex).FirstOrDefault();
         }
 
         /// <summary>
@@ -963,7 +963,7 @@ namespace USAddress
         /// <returns>
         /// List of parsed addresses, or empty list if no address could be parsed.
         /// </returns>
-        public List<AddressParseResult> ExtractAddresses(string input, Regex pattern, bool normalize)
+        public List<AddressParseResult> ExtractAddresses(string input, Regex pattern, bool normalize, int startIndex = 0)
         {
             var results = new List<AddressParseResult>();
 
@@ -982,7 +982,7 @@ namespace USAddress
                 input = input.ToUpperInvariant();
             }
 
-            var matches = pattern.Matches(input);
+            var matches = pattern.Matches(input, startIndex);
 
             foreach (Match match in matches)
             {
@@ -1007,9 +1007,9 @@ namespace USAddress
         /// <returns>
         /// The parsed address fields, or null if the address could not be parsed.
         /// </returns>
-        public AddressParseResult ParseAddressLine(string input, bool normalize = false)
+        public AddressParseResult ParseAddressLine(string input, bool normalize = false, int startIndex = 0)
         {
-            return ParseAddress(input, AddressLineRegex, normalize);
+            return ParseAddress(input, AddressLineRegex, normalize, startIndex);
         }
 
         /// <summary>
@@ -1020,9 +1020,9 @@ namespace USAddress
         /// <returns>
         /// List of parsed addresses, or empty list if no address could be parsed.
         /// </returns>
-        public List<AddressParseResult> ExtractAddressLines(string input, bool normalize = false)
+        public List<AddressParseResult> ExtractAddressLines(string input, bool normalize = false, int startIndex = 0)
         {
-            return ExtractAddresses(input, AddressLineRegex, normalize);
+            return ExtractAddresses(input, AddressLineRegex, normalize, startIndex);
         }
 
         /// <summary>
