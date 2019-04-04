@@ -512,7 +512,7 @@ namespace USAddress
                            |
                             (?<{2}>[^,]+?)
                             (?:[^\w,]+(?<{3}>{1})\b)?
-                            (?:[^\w,]+(?<{5}>{0})\b)?
+                            (?:[^\w,]+(?<{5}>{0})\b)
                           )
                         )
                     ".FormatInvariant(DirectionalPattern, SuffixPattern, Components.Street, Components.Suffix, Components.Predirectional, Components.Postdirectional);
