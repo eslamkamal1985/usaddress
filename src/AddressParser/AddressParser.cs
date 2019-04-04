@@ -484,12 +484,46 @@ namespace USAddress
         };
 
         /// <summary>
-        /// Gets the pattern to match the street number, name, and suffix.
+        /// Gets the pattern to match the street number, name, and optional suffix
         /// </summary>
         /// <value>
         /// The street pattern.
         /// </value>
         public string StreetPattern => @"
+                        (?:
+                          # special case for addresses like 100 COUNTY ROAD F  http://regexstorm.net/tester?p=%28%3f%3a%28%3f%3cSTREET%3eCOUNTY%5cW*ROAD%5cW*%5cw%2b%29%29&i=COUNTY+ROAD+FG%0d%0a%0d%0a&o=ixs
+                          (?:(?<STREET>COUNTY\W*ROAD\W*\w+))
+                          |
+                          # special case for addresses like 3419 Avenue C  http://regexstorm.net/tester?p=%28%3f%3a%28%3f%3cSTREET%3eAVENUE%5cW*%5cw%2b%29%29%0d%0a%23%28%3f%3a%28%3f%3cSTREET%3eAVENUE%5cW*%5ba-zA-Z%5d%7b1%7d%29%29%28%3f%3a%5b%5cs%5d%7c%5b%2c%5d%2b%29%0d%0a&i=3419+Avenue+C+Council+Bluffs+IA+51501%0d%0a5946+AVENUE+E%2c+MCINTOSH%2c+FL+32664%0d%0a&o=ixs
+                          (?:(?<STREET>AVENUE\W*\w+))
+                          |
+                          # special case for addresses like 100 South Street
+                          (?:(?<{2}>{0})\W+
+                             (?<{3}>{1})\b)
+                          |
+                          (?:(?<{4}>{0})\W+)?
+                          (?:
+                            (?<{2}>[^,]*\d)
+                            (?:[^\w,]*(?<{5}>{0})\b)
+                           |
+                            (?<{2}>[^,]+)
+                            (?:[^\w,]+(?<{3}>{1})\b)
+                            (?:[^\w,]+(?<{5}>{0})\b)?
+                           |
+                            (?<{2}>[^,]+?)
+                            (?:[^\w,]+(?<{3}>{1})\b)?
+                            (?:[^\w,]+(?<{5}>{0})\b)?
+                          )
+                        )
+                    ".FormatInvariant(DirectionalPattern, SuffixPattern, Components.Street, Components.Suffix, Components.Predirectional, Components.Postdirectional);
+
+        /// <summary>
+        /// Gets the pattern to match the street number, name, and mandatory suffix
+        /// </summary>
+        /// <value>
+        /// The street pattern.
+        /// </value>
+        public string StreetPatternWithSuffix => @"
                         (?:
                           # special case for addresses like 100 COUNTY ROAD F  http://regexstorm.net/tester?p=%28%3f%3a%28%3f%3cSTREET%3eCOUNTY%5cW*ROAD%5cW*%5cw%2b%29%29&i=COUNTY+ROAD+FG%0d%0a%0d%0a&o=ixs
                           (?:(?<STREET>COUNTY\W*ROAD\W*\w+))
@@ -1179,7 +1213,7 @@ namespace USAddress
                         (  {0} )\W*
                            {1}\W*
                         (?:{2}\W+)?
-                    )".FormatInvariant(numberPattern, StreetPattern, AllSecondaryUnitPattern);
+                    )".FormatInvariant(numberPattern, StreetPatternWithSuffix, AllSecondaryUnitPattern);
 
             var addressPattern = @"
                     \b
